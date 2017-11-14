@@ -60,7 +60,7 @@ public class HttpRequestTest {
 
     @Before
     public void setUp() {
-        request = HttpRequest.build(String.format("http://%s:%s", "localhost", rule.port()));
+        request = new HttpRequest(getBaseUrl());
     }
 
     @Test
@@ -70,9 +70,9 @@ public class HttpRequestTest {
         stubFor(get(urlEqualTo(urlPath))
             .willReturn(aResponse().withStatus(404)));
 
-        request.GET(urlPath)
+        request.Get(urlPath)
             .status(404)
-            .execute();
+            .as(Void.class);
     }
 
     @Test
@@ -82,8 +82,8 @@ public class HttpRequestTest {
         stubFor(get(urlEqualTo(urlPath))
             .willReturn(aResponse().withBodyFile("body-organizations-jenkins-BiWX8.json")));
 
-        Map map = request.GET(urlPath)
-            .asObject(Map.class);
+        Map map = request.Get(urlPath)
+            .as(Map.class);
 
         Assert.assertNotNull(map);
         Assert.assertEquals("jenkins", map.get("name"));
@@ -98,7 +98,7 @@ public class HttpRequestTest {
             .willReturn(aResponse().withStatus(403)));
 
         try {
-            request.GET(urlPath).execute();
+            request.Get(urlPath).as(Void.class);
             Assert.fail("should not succeed");
         } catch (Exception ex) {
             Assert.assertTrue("should contain 403", ex.getMessage().contains("403"));
@@ -112,9 +112,9 @@ public class HttpRequestTest {
         stubFor(get(urlEqualTo(urlPath))
             .willReturn(aResponse().withStatus(200)));
 
-        request.GET(urlPath)
+        request.Get(urlPath)
             .auth("user1", "user1")
-            .execute();
+            .as(Void.class);
 
         verify(getRequestedFor(urlEqualTo(urlPath))
             .withHeader("Authorization", containing("Basic")));
@@ -127,9 +127,9 @@ public class HttpRequestTest {
         stubFor(post(urlEqualTo(urlPath))
             .willReturn(aResponse().withStatus(200)));
 
-        request.POST(urlPath)
+        request.Post(urlPath)
             .bodyJson(ImmutableMap.of("foo", "bar"))
-            .execute();
+            .as(Void.class);
 
         verify(postRequestedFor(urlEqualTo(urlPath))
             .withRequestBody(containing("\"foo\" : \"bar\"")));
@@ -142,9 +142,9 @@ public class HttpRequestTest {
         stubFor(get(urlEqualTo(urlPath))
             .willReturn(aResponse().withStatus(200)));
 
-        request.GET(urlPath)
+        request.Get(urlPath)
             .header("Foo", "Baz")
-            .execute();
+            .as(Void.class);
 
         verify(getRequestedFor(urlEqualTo(urlPath))
             .withHeader("Foo", equalTo("Baz")));
@@ -159,12 +159,32 @@ public class HttpRequestTest {
         stubFor(get(urlEqualTo(urlPath))
             .willReturn(aResponse().withStatus(200).withBody(expectedBody)));
 
-        String actualBody = request.GET(templatedPath)
+        String actualBody = request.Get(templatedPath)
             .urlPart("fname", "londo")
             .urlPart("lname", "mollari")
             .asText();
 
         Assert.assertEquals(expectedBody, actualBody);
+    }
+
+    @Test
+    public void testNoDefaultBaseUrl() throws IOException {
+        String requestPath = "/test/no/baseurl/";
+        String requestUrl = getBaseUrl() + requestPath;
+
+        // NOTE: urlEqualTo doesn't appear to work correctly w/ absolute URL's; passing 'requestPath' works
+        stubFor(get(urlEqualTo(requestPath))
+            .willReturn(aResponse()));
+
+        new HttpRequest()
+            .Get(requestUrl)
+            .as(Void.class);
+
+        verify(getRequestedFor(urlEqualTo(requestPath)));
+    }
+
+    private String getBaseUrl() {
+        return String.format("http://%s:%s", "localhost", rule.port());
     }
 
 }
