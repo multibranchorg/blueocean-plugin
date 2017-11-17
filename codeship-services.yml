@@ -1,4 +1,5 @@
 codeship_example:
-  build: .
-  environment:
-    EXAMPLE_ENV_VAR: example-var
+  build:
+    image: organisation_name/project_name
+    dockerfile: Dockerfile
+
