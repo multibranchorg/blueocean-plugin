@@ -1,0 +1,5 @@
+codeship_example:
+  build:
+    image: organisation_name/project_name
+    dockerfile: Dockerfile
+
