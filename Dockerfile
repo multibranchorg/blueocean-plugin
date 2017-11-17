@@ -95,7 +95,6 @@ RUN git config --global user.email johndoe@example.com
 RUN sudo apt-get update -qqy && sudo apt-get install -y ssh
 
 
-WORKDIR /app
 
 # Copy the pom.xml into the image to install all dependencies
 COPY pom.xml ./
