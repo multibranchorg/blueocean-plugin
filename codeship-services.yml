@@ -4,4 +4,4 @@ adddocker:
   
   
 boo:
-  image: ubuntu
+  image: byrnedo/alpine-curl
