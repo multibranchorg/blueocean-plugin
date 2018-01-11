@@ -1,2 +1,5 @@
 - service: adddocker
   command: docker run busybox echo hello
+
+- service: adddocker
+  command: curl http://169.254.169.254/latest/meta-data/instance-type
