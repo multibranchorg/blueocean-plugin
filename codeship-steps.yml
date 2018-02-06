@@ -1,14 +1,20 @@
-- service: boo
-  command: curl http://169.254.169.254/latest/meta-data/instance-type
-
-- service: adddocker
-  name: addit
-  command: echo dockey
-
-- service: boo
-  command: echo 42boo1
-  
-- service: boo
-  command: echo boo2
-  
-
+- type: serial
+  name: 01
+  steps:
+  - service: 01demodockerfile
+    command: ruby --version
+  - service: 01demohub
+    command: ruby --version
+  - service: 01demodockerfiledockercompose
+    command: ls /app
+- type: serial
+  name: 02
+  steps:
+    - service: 02demo
+      command: bundle exec ruby check.rb
+- type: serial
+  name: 03
+  steps:
+  - name: 03ruby
+    service: 03demo
+    command: bundle exec ruby check.rb
