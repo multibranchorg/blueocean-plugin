@@ -2,6 +2,5 @@ adddocker:
   image: docker:dind
   add_docker: true
   
-  
 boo:
   image: byrnedo/alpine-curl
