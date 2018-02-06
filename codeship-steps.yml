@@ -2,19 +2,19 @@
   name: 01
   steps:
   - service: boo
-    command: echo 1
+    command: ls -lah
   - service: boo
-    command: echo 2
+    command: ls -lah
   - service: adddocker
-    command: echo 3
+    command: ls -lah
 - type: serial
   name: 02
   steps:
     - service: boo
-      command: echo 21
+      command: ls -lah
 - type: serial
-  name: 03
+  name: 03-stage
   steps:
   - name: 03ruby
     service: boo
-    command: echo 32
+    command: ls -lah
