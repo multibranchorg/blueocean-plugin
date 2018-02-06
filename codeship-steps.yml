@@ -12,9 +12,21 @@
   steps:
     - service: boo
       command: ls -lah
+      
+- type: parallel
+  name: this_par
+  steps:
+    - service: boo
+      command: ls -lah
+      name: fisrt
+    - service: boo
+      command: ls -lah
 - type: serial
   name: 03-stage
   steps:
   - name: 03ruby
     service: boo
     command: ls -lah
+    
+    
+    
